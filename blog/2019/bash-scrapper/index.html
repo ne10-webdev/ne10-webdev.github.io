@@ -545,44 +545,30 @@ article {
   </ul>
 </header>
   <div class="page-inner">
-    <div class="container">    
-      <main class="list">
-        
-          <article>
-            <a href="/blog/2019/bash-scrapper/">Bash and downloading images and videos from twitter</a>
-            <p>Scripting in bash almost for the first time ever</p>
-          </article>
-        
-          <article>
-            <a href="/blog/2019/sql-query-problem/">SQL query doesn't sort as i want</a>
-            <p>Had some bugs with kinda simple SQL join's where i want to ORDER BY joined table and limit results with GROUP BY or DISTINCT. Sorting was always wrong, but it wasn't obvious on complex data. So i made simple example.</p>
-          </article>
-        
-          <article>
-            <a href="/blog/2019/electronics-software/">State of electronics & software</a>
-            <p>Not sure why the future should be this way. Things manufacturers come up with</p>
-          </article>
-        
-          <article>
-            <a href="/blog/2020/monthly-list-january/">Monthly January reading list</a>
-            <p>whats up in the world series</p>
-          </article>
-        
-          <article>
-            <a href="/blog/2019/tools/">Tools</a>
-            <p>Tools i use and forget some time after complete reinstall</p>
-          </article>
-        
-          <article>
-            <a href="/blog/2019/monolithic-microservices/">Monolithic vs. Microservices Architecture</a>
-            <p>Few thought about what to choose and why we came to such architectures</p>
-          </article>
-        
-          <article>
-            <a href="/blog/2019/websites-architecture/">Websites arhitechure's - SSE vs SPA vs Static</a>
-            <p>It was simple before. SSE rulled everithing just 15 years ago, but not anymore...</p>
-          </article>
-        
+    <div class="container">
+      <main class="content">
+        <article>
+          <h1>Bash and downloading images and videos from twitter</h1>
+          <p>Is it still a thing to make scripts in bash? Don&#39;t think i ever did something non trivial with bash scripting. It was PHP earlier that covered any my need to automate something, now its node. Feels more powerful and easier than bash. Also i forget syntax when not use it. But with slow ARM server and limited RAM its too wasteful to run time consuming scripts this way.</p>
+<p>So i have to try bash. For example wrote simple read directory content and execute app in loop for each sub-directory:</p>
+<pre><code><span class="hljs-keyword">for</span> file <span class="hljs-keyword">in</span> ./gallery-dl/twitter/*;
+<span class="hljs-keyword">do</span>
+  IFS=<span class="hljs-string">'/'</span>
+  <span class="hljs-built_in">read</span> -ra ADDR &lt;&lt;&lt; <span class="hljs-string">"<span class="hljs-variable">$file</span>"</span>
+  index=0
+  <span class="hljs-keyword">for</span> name <span class="hljs-keyword">in</span> <span class="hljs-string">"<span class="hljs-variable">${ADDR[@]}</span>"</span>; <span class="hljs-keyword">do</span>
+    <span class="hljs-built_in">let</span> <span class="hljs-string">"index += 1"</span>
+    <span class="hljs-keyword">if</span> [[ <span class="hljs-variable">$index</span> == 4 ]];
+    <span class="hljs-keyword">then</span>
+      url=<span class="hljs-string">"https://twitter.com/"</span>
+      url+=<span class="hljs-variable">$name</span>
+      gallery-dl --sleep 6 <span class="hljs-string">"<span class="hljs-variable">$url</span>"</span>
+    <span class="hljs-keyword">fi</span>
+  <span class="hljs-keyword">done</span>
+<span class="hljs-keyword">done</span></code></pre><p><strong>gallery-dl</strong> can download media like images and videos from many websites, so we can schedule downloading all from one script on schedule. So far i don&#39;t see simple way to abort parsing of current feed if we got to the old tweets. So it makes unnecessary requests and takes long time. Twitter API is rate limited to 180 calls every 15 minutes. So i add &quot;--sleep 6&quot; parameter to avoid being banned.</p>
+<p>Its popular misconception that something ever uploaded to internet stays there forever. On social media you account can be banned any minute for no reason and content are gone the same minute for all subscribers. Better to clone what you might need in the future, than rely on bookmarks.</p>
+
+        </article>
       </main>
     </div>
     <footer></footer>

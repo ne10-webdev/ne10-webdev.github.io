@@ -545,44 +545,34 @@ article {
   </ul>
 </header>
   <div class="page-inner">
-    <div class="container">    
-      <main class="list">
-        
-          <article>
-            <a href="/blog/2019/bash-scrapper/">Bash and downloading images and videos from twitter</a>
-            <p>Scripting in bash almost for the first time ever</p>
-          </article>
-        
-          <article>
-            <a href="/blog/2019/sql-query-problem/">SQL query doesn't sort as i want</a>
-            <p>Had some bugs with kinda simple SQL join's where i want to ORDER BY joined table and limit results with GROUP BY or DISTINCT. Sorting was always wrong, but it wasn't obvious on complex data. So i made simple example.</p>
-          </article>
-        
-          <article>
-            <a href="/blog/2019/electronics-software/">State of electronics & software</a>
-            <p>Not sure why the future should be this way. Things manufacturers come up with</p>
-          </article>
-        
-          <article>
-            <a href="/blog/2020/monthly-list-january/">Monthly January reading list</a>
-            <p>whats up in the world series</p>
-          </article>
-        
-          <article>
-            <a href="/blog/2019/tools/">Tools</a>
-            <p>Tools i use and forget some time after complete reinstall</p>
-          </article>
-        
-          <article>
-            <a href="/blog/2019/monolithic-microservices/">Monolithic vs. Microservices Architecture</a>
-            <p>Few thought about what to choose and why we came to such architectures</p>
-          </article>
-        
-          <article>
-            <a href="/blog/2019/websites-architecture/">Websites arhitechure's - SSE vs SPA vs Static</a>
-            <p>It was simple before. SSE rulled everithing just 15 years ago, but not anymore...</p>
-          </article>
-        
+    <div class="container">
+      <main class="content">
+        <article>
+          <h1>SQL query doesn&#39;t sort as i want</h1>
+          <p>Had some bugs with kinda simple SQL join&#39;s where i want to ORDER BY joined table and limit results with GROUP BY or DISTINCT. Sorting was always wrong, but it wasn&#39;t obvious on complex data. So i made simple example.</p>
+<p>Let&#39;s say i have many-to-many relation between <em>authors</em> and <em>books</em> via table <em>authorsBooks</em>. And i want simply a list with all authors with max number of pages in books they relate to.</p>
+<p>Somehow i can&#39;t use in the same query INNER JOIN with both ORDER BY and GROUP BY</p>
+<p>So i ended up with this query and have no idea if it&#39;s a practical solution. Without subquery i can&#39;t get right order.</p>
+<pre><code><span class="hljs-keyword">SELECT</span> * <span class="hljs-keyword">FROM</span> authors a
+<span class="hljs-keyword">INNER</span> <span class="hljs-keyword">JOIN</span> authorsBooks r <span class="hljs-keyword">ON</span> r.author = a.name
+<span class="hljs-keyword">INNER</span> <span class="hljs-keyword">JOIN</span> (
+  <span class="hljs-keyword">SELECT</span> br.* <span class="hljs-keyword">FROM</span> (
+    <span class="hljs-keyword">SELECT</span> * <span class="hljs-keyword">FROM</span> books b
+    <span class="hljs-keyword">INNER</span> <span class="hljs-keyword">JOIN</span> authorsBooks r <span class="hljs-keyword">ON</span> r.book = b.<span class="hljs-built_in">title</span>
+    <span class="hljs-keyword">ORDER</span> <span class="hljs-keyword">BY</span> pages <span class="hljs-keyword">DESC</span>
+  ) br
+  <span class="hljs-keyword">GROUP</span> <span class="hljs-keyword">BY</span> br.author
+) b <span class="hljs-keyword">ON</span> r.book = b.<span class="hljs-built_in">title</span>;</code></pre><p>I use knex.js to format complex SQL queries, so on knex it looks like this:</p>
+<pre><code><span class="hljs-keyword">const</span> data = <span class="hljs-keyword">await</span> knex(<span class="hljs-string">'authors'</span>).<span class="hljs-keyword">select</span>()
+  .<span class="hljs-keyword">join</span>(<span class="hljs-string">'authorsBooks'</span>, <span class="hljs-string">'authorsBooks.author'</span>, <span class="hljs-string">'='</span>, <span class="hljs-string">'authors.name'</span>)
+  .<span class="hljs-keyword">join</span>(function(){
+    <span class="hljs-keyword">this</span>.<span class="hljs-keyword">select</span>().<span class="hljs-keyword">from</span>(function(){
+      <span class="hljs-keyword">this</span>.<span class="hljs-keyword">select</span>().<span class="hljs-keyword">from</span>(<span class="hljs-string">'books'</span>)
+        .<span class="hljs-keyword">join</span>(<span class="hljs-string">'authorsBooks'</span>, <span class="hljs-string">'authorsBooks.book'</span>, <span class="hljs-string">'='</span>, <span class="hljs-string">'books.title'</span>)
+        .orderBy(<span class="hljs-string">'pages'</span>, <span class="hljs-string">'DESC'</span>);
+    }).groupBy(<span class="hljs-string">'author'</span>)
+  }, <span class="hljs-string">'authorsBooks.book'</span>, <span class="hljs-string">'='</span>, <span class="hljs-string">'title'</span>);</code></pre>
+        </article>
       </main>
     </div>
     <footer></footer>

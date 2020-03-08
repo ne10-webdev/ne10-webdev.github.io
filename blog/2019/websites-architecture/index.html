@@ -545,44 +545,55 @@ article {
   </ul>
 </header>
   <div class="page-inner">
-    <div class="container">    
-      <main class="list">
-        
-          <article>
-            <a href="/blog/2019/bash-scrapper/">Bash and downloading images and videos from twitter</a>
-            <p>Scripting in bash almost for the first time ever</p>
-          </article>
-        
-          <article>
-            <a href="/blog/2019/sql-query-problem/">SQL query doesn't sort as i want</a>
-            <p>Had some bugs with kinda simple SQL join's where i want to ORDER BY joined table and limit results with GROUP BY or DISTINCT. Sorting was always wrong, but it wasn't obvious on complex data. So i made simple example.</p>
-          </article>
-        
-          <article>
-            <a href="/blog/2019/electronics-software/">State of electronics & software</a>
-            <p>Not sure why the future should be this way. Things manufacturers come up with</p>
-          </article>
-        
-          <article>
-            <a href="/blog/2020/monthly-list-january/">Monthly January reading list</a>
-            <p>whats up in the world series</p>
-          </article>
-        
-          <article>
-            <a href="/blog/2019/tools/">Tools</a>
-            <p>Tools i use and forget some time after complete reinstall</p>
-          </article>
-        
-          <article>
-            <a href="/blog/2019/monolithic-microservices/">Monolithic vs. Microservices Architecture</a>
-            <p>Few thought about what to choose and why we came to such architectures</p>
-          </article>
-        
-          <article>
-            <a href="/blog/2019/websites-architecture/">Websites arhitechure's - SSE vs SPA vs Static</a>
-            <p>It was simple before. SSE rulled everithing just 15 years ago, but not anymore...</p>
-          </article>
-        
+    <div class="container">
+      <main class="content">
+        <article>
+          <h1>Websites arhitechure&#39;s - SSE vs SPA vs Static</h1>
+          <p>It was simple before. SSE ruled everything just 15 years ago, but not anymore. There&#39;s a bit of misunderstanding about what, when and why to use nowadays. I tried to dig for a reasons why SPA fills more complicated to develop than SSR websites. And what advantages/disadvantages each type has. Theres no one type that can be used universally yet.</p>
+<p>Lets start from simplest</p>
+<h2 id="static-websites">Static websites</h2>
+<p>Pros:</p>
+<ul>
+<li>runs on any webserver</li>
+<li>easy deploy/configuration</li>
+</ul>
+<p>Cons:</p>
+<ul>
+<li>slow deploy or complicated engine when it handles lots of content</li>
+</ul>
+<p>Somehow it fills most people think if you do static website you must abandon any DB and use only plain text / templates files on filesystem as a data source for static engine. But why so? What makes static website is its engine that pre-generate web pages beforehand and than any webserver can serve them. We can have any data source connected to such engine, it can be files on filesystem, SQL / NoSQL DB, 3d party API, 3d party app that generate data, anything. It&#39;s all about how your users prefer to manage content.</p>
+<p>If you choose for example markdown files on filesystem, than you don&#39;t need to build web based UI to manage content. But you also can have admin part as SPA with API connected to local SQL DB to manage content for static website. You&#39;ll have all advantages on admin part<br>and all advantages of static website on front user part. It can be monolithic on one server or distributed as few servers where remote admin part deploy static files to standalone user-facing webserver. Its best of both worlds and not over-complicated.</p>
+<h2 id="server-side-rendering-ssr">Server Side Rendering (SSR)</h2>
+<p>Pros:</p>
+<ul>
+<li>straightforward development</li>
+</ul>
+<p>Cons:</p>
+<ul>
+<li>server load spent for rendering templates</li>
+<li>can have slow UI</li>
+</ul>
+<p>Used to be the only choose and kinda default choose today. Or probably should be so.
+I tried to figure out for myself why it fills like programming SSR is easier than SPA. Until i tried to make same code work on both sides i have not seen easy answer. It felt like i deal with less complexity on SSR beacause time span when my code are running for me fills as short and limited - from HTTP request to response. While on SPA my code running all the time when page are open and data in local state changes many times from different events.</p>
+<p>Data flow on SSR most of the time are easy, you get params from user http request, call DB, prepare data for template, serve results back with response. Data flow always in same direction with mostly similar number of steps/events. On client side data mostly don&#39;t have state In old days of jQuery-like architecture, data had life only in DOM.</p>
+<h2 id="single-page-application-spa">Single Page Application (SPA)</h2>
+<p>Pros:</p>
+<ul>
+<li>fast UI when business logic can be processed locally</li>
+<li>less compute demands on backend side</li>
+</ul>
+<p>Cons:</p>
+<ul>
+<li>huge size footprint of JS frameworks: load speed, cpu usage, etc.</li>
+<li>complicated logic</li>
+<li>not easy to parse such webapps for 3d-party apps (search engines, indexers, content parsers, etc)</li>
+</ul>
+<p>It&#39;s most complicated architecture for sure. JS bloat on client side leads to huge disadvantages. When it is used where it&#39;s avoidable it&#39;s slows everything. HTML pages not that huge in size after compression compared to JSON responses. If end user only shortly interact and leave after visiting few pages than you probably don&#39;t want SPA. Not only load times are bigger, but more CPU and GPU usage leads to laggy experience, specially on low powered devices. Consider amount of JS that client has to compile and execute, amount of page content changes that leads to re-render&#39;s. Web was build for simple texts but became platform for everything today. There&#39;s almost no point to make website with mostly article-like content to be SPA, but many do.</p>
+<p>Data flow more complicated than on SSR. Actually you have to be aware of two data flows - on SPA client side and back-end. Twice the work. And data flow on SPA can have many direction. Same component will get events with data from user and will communicate with API in both direction. To deal with data it will have its own state.</p>
+<p>SSR can handle dynamic live data via jQuery-like code that update only parts of page. Its ok as for me, not fancy, but it works. Partly applying SPA to big SSR app also possible.</p>
+<p>SPA development became over complicated fast. And mostly without a good reason. Not every project are on the same scale of complexity so there no golden tool. SPA frameworks add new problems we haven&#39;t had before and require time that can be spent elsewhere.</p>
+
+        </article>
       </main>
     </div>
     <footer></footer>

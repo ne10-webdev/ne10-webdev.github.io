@@ -545,44 +545,15 @@ article {
   </ul>
 </header>
   <div class="page-inner">
-    <div class="container">    
-      <main class="list">
-        
-          <article>
-            <a href="/blog/2019/bash-scrapper/">Bash and downloading images and videos from twitter</a>
-            <p>Scripting in bash almost for the first time ever</p>
-          </article>
-        
-          <article>
-            <a href="/blog/2019/sql-query-problem/">SQL query doesn't sort as i want</a>
-            <p>Had some bugs with kinda simple SQL join's where i want to ORDER BY joined table and limit results with GROUP BY or DISTINCT. Sorting was always wrong, but it wasn't obvious on complex data. So i made simple example.</p>
-          </article>
-        
-          <article>
-            <a href="/blog/2019/electronics-software/">State of electronics & software</a>
-            <p>Not sure why the future should be this way. Things manufacturers come up with</p>
-          </article>
-        
-          <article>
-            <a href="/blog/2020/monthly-list-january/">Monthly January reading list</a>
-            <p>whats up in the world series</p>
-          </article>
-        
-          <article>
-            <a href="/blog/2019/tools/">Tools</a>
-            <p>Tools i use and forget some time after complete reinstall</p>
-          </article>
-        
-          <article>
-            <a href="/blog/2019/monolithic-microservices/">Monolithic vs. Microservices Architecture</a>
-            <p>Few thought about what to choose and why we came to such architectures</p>
-          </article>
-        
-          <article>
-            <a href="/blog/2019/websites-architecture/">Websites arhitechure's - SSE vs SPA vs Static</a>
-            <p>It was simple before. SSE rulled everithing just 15 years ago, but not anymore...</p>
-          </article>
-        
+    <div class="container">
+      <main class="content">
+        <article>
+          <h1>Monolithic vs. Microservices Architecture</h1>
+          <p>&quot;Microservices makes sense as long as they speed up development business logic and not stay in the way of it. Somehow it fills like a balance goes way off the scale. If I have to spend so much time to learn, setup and manage infrastructure than i have less time for business logic left. If its a team - same thing. So it has to be different teams with different skills.</p>
+<p>From speed point of view monolithic makes sense, coz they don&#39;t have waste time to communicate with different parts. Network IO delays are huge. And its probably rare to see all containers running on the same server. But we can speed things up by writing different microservices with different language that better handle given task. I think that&#39;s the main point of going this route.</p>
+<p>Something like docker are easy to learn and relatively easy to manage in simple way. But Kubernetes orchestration just way too much for me. LXC containers probably a way to go. It fills awesome to setup Proxmox cluster with few nodes. You don&#39;t have to be a admin to setup redundancy this way. Kill a node with running container and it will restart from another node with short delay. Even monolith than can handle crashes without spending any time on extra code.&quot;</p>
+
+        </article>
       </main>
     </div>
     <footer></footer>
