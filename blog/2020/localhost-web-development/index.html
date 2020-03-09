@@ -582,16 +582,41 @@ footer a {
     <div class="container">
       <main class="content">
         <article>
-          <h1>Monthly January reading list</h1>
-          <p><a href="http://itvision.altervista.org/why.linux.is.not.ready.for.the.desktop.current.html">Major Linux Problems on the Desktop, 2019 edition</a> - i&#39;m not a fan boy of linux, but have not been aware that it is that bad. So for example i didn&#39;t know theres no hardware video decoding enabled in any web browser under Linux. I see 50% CPU load each time on 1080p youtube. Plus screen tearing, specially on pivot display.</p>
-<p><a href="http://itvision.altervista.org/why-windows-10-sucks.html">Why Windows 10 Sucks or Everything Wrong with Microsoft Windows</a> - well so this is why Linux is better choose for many use cases</p>
-<p><a href="https://overreacted.io/goodbye-clean-code/">Goodbye, Clean Code</a> - looks true</p>
-<p><a href="https://tjcx.me/posts/i-wasted-40k-on-a-fantastic-startup-idea/">I wasted $40k on a fantastic startup idea</a></p>
-<p>New version of <a href="https://openwrt.org/toh/start">openwrt</a> has mine old router, but no new one. lol.</p>
-<p><a href="https://www.ign.com/articles/2019/03/19/e3-2018-the-rise-of-streamed-gaming-is-2018s-scariest-new-trend">The Rise of Streamed Gaming Is Video Games&#39; Scariest New Trend</a> - software for rent became a thing long time ago. there&#39;s almost no software left without some subscription model of ownership. you can&#39;t buy once and use forever. now hardware for rent also becoming a thing. you mostly don&#39;t own your &quot;smart&quot;-something always-connected device. you can&#39;t use it after it is abandoned.</p>
-<p>Inciden&#39;t on airplanes are not that rare as statistics says: <a href="http://avherald.com/">The Aviation Herald</a></p>
-<p><a href="https://www.youtube.com/watch?v=QVbRO-6MFV4">Video: 10 Graphically INSANE Levels Created In UNREAL ENGINE 4</a> - hard do grasp that all 3D building blocks just a vertexes, edges and faces. Basic of 3D graphics are really is simple. If you get some engine you can start in one day to develop something you can see. Its easier than CSS. Probably best talk i remember: <a href="https://www.youtube.com/watch?v=R84JU3B0jqo">Video: Three js, easy 3D in your browser for when two dimensions just aren&#39;t enough by Jos Dirksen</a></p>
+          <h1>Localhost web development</h1>
+          <p>Simple local web development setup for multiple projects.</p>
+<p>Each project might require own API server on one port, app server on another port and static assets server. Opening <em>localhost:3000</em> is easy, but remembering <em>localhost:3410</em> not so.</p>
+<p>Hosts file (or self-hosted DNS server):</p>
+<pre><code># cat /etc/hosts
 
+<span class="hljs-number">127.0.0.1</span>       localhost myhost myhost.local
+<span class="hljs-number">127.0.1.1</span>       project1.myhost.local
+<span class="hljs-number">127.0.0.1</span>       api.project1.myhost.local
+<span class="hljs-number">127.0.0.1</span>       cdn.project1.myhost.local
+<span class="hljs-number">127.0.1.1</span>       project2.myhost.local
+<span class="hljs-number">127.0.0.1</span>       api.project2.myhost.local
+<span class="hljs-number">127.0.0.1</span>       cdn.project2.myhost.local</code></pre><p>Lighttpd configuration:</p>
+<pre><code><span class="hljs-comment"># cat /etc/lighttpd/conf-enabled/project1.conf</span>
+
+$HTTP[<span class="hljs-string">"host"</span>] == <span class="hljs-string">"project1.myhost.local"</span> {
+  proxy.server  = ( <span class="hljs-string">""</span> =&gt; (
+    ( <span class="hljs-string">"host"</span> =&gt; <span class="hljs-string">"127.0.0.1"</span>, <span class="hljs-string">"port"</span> =&gt; <span class="hljs-number">3000</span> )
+  ) )
+}
+
+$HTTP[<span class="hljs-string">"host"</span>] == <span class="hljs-string">"api.project1.myhost.local"</span> {
+  proxy.server  = ( <span class="hljs-string">""</span> =&gt; (
+    ( <span class="hljs-string">"host"</span> =&gt; <span class="hljs-string">"127.0.0.1"</span>, <span class="hljs-string">"port"</span> =&gt; <span class="hljs-number">3410</span> )
+  ) )
+}
+
+$HTTP[<span class="hljs-string">"host"</span>] == <span class="hljs-string">"cdn.project1.myhost.local"</span> {
+  server.document-root = <span class="hljs-string">"/home/user/web/project/cdn/"</span>
+}</code></pre><p>Enable proxy server:</p>
+<pre><code><span class="hljs-meta"># cat /etc/lighttpd/lighttpd.conf</span>
+
+<span class="hljs-keyword">server</span>.modules = (
+  <span class="hljs-string">"mod_proxy"</span>
+)</code></pre>
         </article>
       </main>
     </div>
