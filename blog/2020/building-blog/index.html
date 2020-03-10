@@ -694,10 +694,27 @@ fs.writeFileSync(path.join(destPath, <span class="hljs-string">'index.html'</spa
   }
 }</code></pre>
 <p>I used highlight.js library to highlight code samples included in markdown files right on the backend of blog engine. So no client-side javascript needed, but it significantly slowed down site build time.</p>
+<p>At first i thought that autodetect is good enough, but it didn&#39;t really worked as expected:</p>
 <pre><code class="language-javascript"><span class="hljs-keyword">const</span> hljs = <span class="hljs-built_in">require</span>(<span class="hljs-string">"highlight.js"</span>);
 marked.setOptions({
   <span class="hljs-attr">highlight</span>: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">md</span>) </span>{
     <span class="hljs-keyword">return</span> hljs.highlightAuto(md).value;
+  }
+});</code></pre>
+<p>I had to limit languages used and force them manually to be safe:</p>
+<pre><code class="language-javascript"><span class="hljs-keyword">const</span> hljs = <span class="hljs-built_in">require</span>(<span class="hljs-string">"highlight.js/lib/highlight.js"</span>);
+hljs.registerLanguage(<span class="hljs-string">'javascript'</span>, <span class="hljs-built_in">require</span>(<span class="hljs-string">'highlight.js/lib/languages/javascript'</span>));
+hljs.registerLanguage(<span class="hljs-string">'plaintext'</span>, <span class="hljs-built_in">require</span>(<span class="hljs-string">'highlight.js/lib/languages/plaintext'</span>));
+hljs.registerLanguage(<span class="hljs-string">'yaml'</span>, <span class="hljs-built_in">require</span>(<span class="hljs-string">'highlight.js/lib/languages/yaml'</span>));
+hljs.registerLanguage(<span class="hljs-string">'sql'</span>, <span class="hljs-built_in">require</span>(<span class="hljs-string">'highlight.js/lib/languages/sql'</span>));
+hljs.registerLanguage(<span class="hljs-string">'bash'</span>, <span class="hljs-built_in">require</span>(<span class="hljs-string">'highlight.js/lib/languages/bash'</span>));
+hljs.registerLanguage(<span class="hljs-string">'htmlbars'</span>, <span class="hljs-built_in">require</span>(<span class="hljs-string">'highlight.js/lib/languages/htmlbars'</span>));
+hljs.registerLanguage(<span class="hljs-string">'json'</span>, <span class="hljs-built_in">require</span>(<span class="hljs-string">'highlight.js/lib/languages/json'</span>));
+
+marked.setOptions({
+  <span class="hljs-attr">highlight</span>: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">code, language</span>) </span>{
+    <span class="hljs-keyword">const</span> validLanguage = hljs.getLanguage(language) ? language : <span class="hljs-string">'plaintext'</span>;
+    <span class="hljs-keyword">return</span> hljs.highlight(validLanguage, code).value;
   }
 });</code></pre>
 <p>Each time after we change content or site template we have to rebuild static version. And refresh a browser to see changes. Its boring and have to be authomated. We can use live-server to reload browser, and chokidar library to listen for file changes:</p>
