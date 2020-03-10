@@ -383,7 +383,7 @@ header.menu li {
   clear: both;
 }
 
-.list a {
+.list .list-header {
   font-weight: 600;
   font-size: 1.2em;
 }
@@ -429,7 +429,6 @@ article {
   list-style-type: disc;
   margin-left: 1em;
 }
-
 
 /* Footer & Teaser */
 
@@ -587,25 +586,27 @@ footer a {
 <p>Let&#39;s say i have many-to-many relation between <em>authors</em> and <em>books</em> via table <em>authorsBooks</em>. And i want simply a list with all authors with max number of pages in books they relate to.</p>
 <p>Somehow i can&#39;t use in the same query INNER JOIN with both ORDER BY and GROUP BY</p>
 <p>So i ended up with this query and have no idea if it&#39;s a practical solution. Without subquery i can&#39;t get right order.</p>
-<pre><code><span class="hljs-keyword">SELECT</span> * <span class="hljs-keyword">FROM</span> authors a
+<pre><code class="language-sql"><span class="hljs-keyword">SELECT</span> * <span class="hljs-keyword">FROM</span> <span class="hljs-keyword">authors</span> a
 <span class="hljs-keyword">INNER</span> <span class="hljs-keyword">JOIN</span> authorsBooks r <span class="hljs-keyword">ON</span> r.author = a.name
 <span class="hljs-keyword">INNER</span> <span class="hljs-keyword">JOIN</span> (
   <span class="hljs-keyword">SELECT</span> br.* <span class="hljs-keyword">FROM</span> (
     <span class="hljs-keyword">SELECT</span> * <span class="hljs-keyword">FROM</span> books b
-    <span class="hljs-keyword">INNER</span> <span class="hljs-keyword">JOIN</span> authorsBooks r <span class="hljs-keyword">ON</span> r.book = b.<span class="hljs-built_in">title</span>
+    <span class="hljs-keyword">INNER</span> <span class="hljs-keyword">JOIN</span> authorsBooks r <span class="hljs-keyword">ON</span> r.book = b.title
     <span class="hljs-keyword">ORDER</span> <span class="hljs-keyword">BY</span> pages <span class="hljs-keyword">DESC</span>
   ) br
   <span class="hljs-keyword">GROUP</span> <span class="hljs-keyword">BY</span> br.author
-) b <span class="hljs-keyword">ON</span> r.book = b.<span class="hljs-built_in">title</span>;</code></pre><p>I use knex.js to format complex SQL queries, so on knex it looks like this:</p>
-<pre><code><span class="hljs-keyword">const</span> data = <span class="hljs-keyword">await</span> knex(<span class="hljs-string">'authors'</span>).<span class="hljs-keyword">select</span>()
-  .<span class="hljs-keyword">join</span>(<span class="hljs-string">'authorsBooks'</span>, <span class="hljs-string">'authorsBooks.author'</span>, <span class="hljs-string">'='</span>, <span class="hljs-string">'authors.name'</span>)
-  .<span class="hljs-keyword">join</span>(function(){
-    <span class="hljs-keyword">this</span>.<span class="hljs-keyword">select</span>().<span class="hljs-keyword">from</span>(function(){
-      <span class="hljs-keyword">this</span>.<span class="hljs-keyword">select</span>().<span class="hljs-keyword">from</span>(<span class="hljs-string">'books'</span>)
-        .<span class="hljs-keyword">join</span>(<span class="hljs-string">'authorsBooks'</span>, <span class="hljs-string">'authorsBooks.book'</span>, <span class="hljs-string">'='</span>, <span class="hljs-string">'books.title'</span>)
+) b <span class="hljs-keyword">ON</span> r.book = b.title;</code></pre>
+<p>I use knex.js to format complex SQL queries, so on knex it looks like this:</p>
+<pre><code class="language-javascript"><span class="hljs-keyword">const</span> data = <span class="hljs-keyword">await</span> knex(<span class="hljs-string">'authors'</span>).select()
+  .join(<span class="hljs-string">'authorsBooks'</span>, <span class="hljs-string">'authorsBooks.author'</span>, <span class="hljs-string">'='</span>, <span class="hljs-string">'authors.name'</span>)
+  .join(<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>)</span>{
+    <span class="hljs-keyword">this</span>.select().from(<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>)</span>{
+      <span class="hljs-keyword">this</span>.select().from(<span class="hljs-string">'books'</span>)
+        .join(<span class="hljs-string">'authorsBooks'</span>, <span class="hljs-string">'authorsBooks.book'</span>, <span class="hljs-string">'='</span>, <span class="hljs-string">'books.title'</span>)
         .orderBy(<span class="hljs-string">'pages'</span>, <span class="hljs-string">'DESC'</span>);
     }).groupBy(<span class="hljs-string">'author'</span>)
   }, <span class="hljs-string">'authorsBooks.book'</span>, <span class="hljs-string">'='</span>, <span class="hljs-string">'title'</span>);</code></pre>
+
         </article>
       </main>
     </div>
@@ -615,6 +616,9 @@ footer a {
       <h2>
         <a href="/about/">About</a>
       </h2>
+      <p>
+        Contact e-mail: <a href="mailto:ne10-webdev@protonmail.com">ne10-webdev@protonmail.com</a>
+      </p>
       <p>
         On this blog, you'll mostly find <a href="/">posts</a> about web development, software and hardware
       </p>

@@ -383,7 +383,7 @@ header.menu li {
   clear: both;
 }
 
-.list a {
+.list .list-header {
   font-weight: 600;
   font-size: 1.2em;
 }
@@ -429,7 +429,6 @@ article {
   list-style-type: disc;
   margin-left: 1em;
 }
-
 
 /* Footer & Teaser */
 
@@ -586,37 +585,40 @@ footer a {
           <p>Simple local web development setup for multiple projects.</p>
 <p>Each project might require own API server on one port, app server on another port and static assets server. Opening <em>localhost:3000</em> is easy, but remembering <em>localhost:3410</em> not so.</p>
 <p>Hosts file (or self-hosted DNS server):</p>
-<pre><code># cat /etc/hosts
+<pre><code class="language-bash"><span class="hljs-comment"># cat /etc/hosts</span>
 
-<span class="hljs-number">127.0.0.1</span>       localhost myhost myhost.local
-<span class="hljs-number">127.0.1.1</span>       project1.myhost.local
-<span class="hljs-number">127.0.0.1</span>       api.project1.myhost.local
-<span class="hljs-number">127.0.0.1</span>       cdn.project1.myhost.local
-<span class="hljs-number">127.0.1.1</span>       project2.myhost.local
-<span class="hljs-number">127.0.0.1</span>       api.project2.myhost.local
-<span class="hljs-number">127.0.0.1</span>       cdn.project2.myhost.local</code></pre><p>Lighttpd configuration:</p>
-<pre><code><span class="hljs-comment"># cat /etc/lighttpd/conf-enabled/project1.conf</span>
+127.0.0.1       localhost myhost myhost.local
+127.0.1.1       project1.myhost.local
+127.0.0.1       api.project1.myhost.local
+127.0.0.1       cdn.project1.myhost.local
+127.0.1.1       project2.myhost.local
+127.0.0.1       api.project2.myhost.local
+127.0.0.1       cdn.project2.myhost.local</code></pre>
+<p>Lighttpd configuration:</p>
+<pre><code class="language-bash"><span class="hljs-comment"># cat /etc/lighttpd/conf-enabled/project1.conf</span>
 
-$HTTP[<span class="hljs-string">"host"</span>] == <span class="hljs-string">"project1.myhost.local"</span> {
+<span class="hljs-variable">$HTTP</span>[<span class="hljs-string">"host"</span>] == <span class="hljs-string">"project1.myhost.local"</span> {
   proxy.server  = ( <span class="hljs-string">""</span> =&gt; (
-    ( <span class="hljs-string">"host"</span> =&gt; <span class="hljs-string">"127.0.0.1"</span>, <span class="hljs-string">"port"</span> =&gt; <span class="hljs-number">3000</span> )
+    ( <span class="hljs-string">"host"</span> =&gt; <span class="hljs-string">"127.0.0.1"</span>, <span class="hljs-string">"port"</span> =&gt; 3000 )
   ) )
 }
 
-$HTTP[<span class="hljs-string">"host"</span>] == <span class="hljs-string">"api.project1.myhost.local"</span> {
+<span class="hljs-variable">$HTTP</span>[<span class="hljs-string">"host"</span>] == <span class="hljs-string">"api.project1.myhost.local"</span> {
   proxy.server  = ( <span class="hljs-string">""</span> =&gt; (
-    ( <span class="hljs-string">"host"</span> =&gt; <span class="hljs-string">"127.0.0.1"</span>, <span class="hljs-string">"port"</span> =&gt; <span class="hljs-number">3410</span> )
+    ( <span class="hljs-string">"host"</span> =&gt; <span class="hljs-string">"127.0.0.1"</span>, <span class="hljs-string">"port"</span> =&gt; 3410 )
   ) )
 }
 
-$HTTP[<span class="hljs-string">"host"</span>] == <span class="hljs-string">"cdn.project1.myhost.local"</span> {
+<span class="hljs-variable">$HTTP</span>[<span class="hljs-string">"host"</span>] == <span class="hljs-string">"cdn.project1.myhost.local"</span> {
   server.document-root = <span class="hljs-string">"/home/user/web/project/cdn/"</span>
-}</code></pre><p>Enable proxy server:</p>
-<pre><code><span class="hljs-meta"># cat /etc/lighttpd/lighttpd.conf</span>
+}</code></pre>
+<p>Enable proxy server:</p>
+<pre><code class="language-bash"><span class="hljs-comment"># cat /etc/lighttpd/lighttpd.conf</span>
 
-<span class="hljs-keyword">server</span>.modules = (
+server.modules = (
   <span class="hljs-string">"mod_proxy"</span>
 )</code></pre>
+
         </article>
       </main>
     </div>
@@ -626,6 +628,9 @@ $HTTP[<span class="hljs-string">"host"</span>] == <span class="hljs-string">"cdn
       <h2>
         <a href="/about/">About</a>
       </h2>
+      <p>
+        Contact e-mail: <a href="mailto:ne10-webdev@protonmail.com">ne10-webdev@protonmail.com</a>
+      </p>
       <p>
         On this blog, you'll mostly find <a href="/">posts</a> about web development, software and hardware
       </p>

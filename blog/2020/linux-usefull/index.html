@@ -383,7 +383,7 @@ header.menu li {
   clear: both;
 }
 
-.list a {
+.list .list-header {
   font-weight: 600;
   font-size: 1.2em;
 }
@@ -429,7 +429,6 @@ article {
   list-style-type: disc;
   margin-left: 1em;
 }
-
 
 /* Footer & Teaser */
 
@@ -584,11 +583,16 @@ footer a {
         <article>
           <h1>Usefull Unix stuff</h1>
           <p>Create partition in RAM for fast read/write virtual disk:</p>
-<pre><code>mount -t tmpfs -o <span class="hljs-keyword">size</span>=<span class="hljs-number">10240</span>M tmpfs <span class="hljs-regexp">/home/u</span>ser<span class="hljs-regexp">/ram/</span></code></pre><p>Quickly mount directory on remote pc:</p>
-<pre><code>sshfs pi<span class="hljs-variable">@pi</span><span class="hljs-symbol">:/home/pi</span> /media/pi</code></pre><p>Mount NFS share:</p>
-<pre><code>mount -t nfs -o noac,sync <span class="hljs-literal">pi</span>:/ /media/<span class="hljs-literal">pi</span></code></pre><p>Enable second display:</p>
-<pre><code><span class="hljs-comment">xrandr</span> --<span class="hljs-comment">output</span> <span class="hljs-comment">HDMI1</span> --<span class="hljs-comment">auto</span> --<span class="hljs-comment">right</span><span class="hljs-literal">-</span><span class="hljs-comment">of</span> <span class="hljs-comment">DP1</span></code></pre><p>Quickly cut video without transcoding:</p>
-<pre><code>ffmpeg -i /home/user/video-src.mp4 -ss <span class="hljs-number">01</span>:<span class="hljs-number">11</span>:<span class="hljs-number">15</span> -to <span class="hljs-number">02</span>:<span class="hljs-number">04</span>:<span class="hljs-number">01</span> -c copy /home/user/video-cut.mp4</code></pre>
+<pre><code class="language-bash">mount -t tmpfs -o size=10240M tmpfs /home/user/ram/</code></pre>
+<p>Quickly mount directory on remote pc:</p>
+<pre><code class="language-bash">sshfs pi@pi:/home/pi /media/pi</code></pre>
+<p>Mount NFS share:</p>
+<pre><code class="language-bash">mount -t nfs -o noac,sync pi:/ /media/pi</code></pre>
+<p>Enable second display:</p>
+<pre><code class="language-bash">xrandr --output HDMI1 --auto --right-of DP1</code></pre>
+<p>Quickly cut video without transcoding:</p>
+<pre><code class="language-bash">ffmpeg -i /home/user/video-src.mp4 -ss 01:11:15 -to 02:04:01 -c copy /home/user/video-cut.mp4</code></pre>
+
         </article>
       </main>
     </div>
@@ -598,6 +602,9 @@ footer a {
       <h2>
         <a href="/about/">About</a>
       </h2>
+      <p>
+        Contact e-mail: <a href="mailto:ne10-webdev@protonmail.com">ne10-webdev@protonmail.com</a>
+      </p>
       <p>
         On this blog, you'll mostly find <a href="/">posts</a> about web development, software and hardware
       </p>

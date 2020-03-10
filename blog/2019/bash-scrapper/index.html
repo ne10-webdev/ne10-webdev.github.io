@@ -383,7 +383,7 @@ header.menu li {
   clear: both;
 }
 
-.list a {
+.list .list-header {
   font-weight: 600;
   font-size: 1.2em;
 }
@@ -429,7 +429,6 @@ article {
   list-style-type: disc;
   margin-left: 1em;
 }
-
 
 /* Footer & Teaser */
 
@@ -585,7 +584,7 @@ footer a {
           <h1>Bash and downloading images and videos from twitter</h1>
           <p>Is it still a thing to make scripts in bash? Don&#39;t think i ever did something non trivial with bash scripting. It was PHP earlier that covered any my need to automate something, now its node. Feels more powerful and easier than bash. Also i forget syntax when not use it. But with slow ARM server and limited RAM its too wasteful to run time consuming scripts this way.</p>
 <p>So i have to try bash. For example wrote simple read directory content and execute app in loop for each sub-directory:</p>
-<pre><code><span class="hljs-keyword">for</span> file <span class="hljs-keyword">in</span> ./gallery-dl/twitter/*;
+<pre><code class="language-bash"><span class="hljs-keyword">for</span> file <span class="hljs-keyword">in</span> ./gallery-dl/twitter/*;
 <span class="hljs-keyword">do</span>
   IFS=<span class="hljs-string">'/'</span>
   <span class="hljs-built_in">read</span> -ra ADDR &lt;&lt;&lt; <span class="hljs-string">"<span class="hljs-variable">$file</span>"</span>
@@ -599,7 +598,8 @@ footer a {
       gallery-dl --sleep 6 <span class="hljs-string">"<span class="hljs-variable">$url</span>"</span>
     <span class="hljs-keyword">fi</span>
   <span class="hljs-keyword">done</span>
-<span class="hljs-keyword">done</span></code></pre><p><strong>gallery-dl</strong> can download media like images and videos from many websites, so we can schedule downloading all from one script on schedule. So far i don&#39;t see simple way to abort parsing of current feed if we got to the old tweets. So it makes unnecessary requests and takes long time. Twitter API is rate limited to 180 calls every 15 minutes. So i add &quot;--sleep 6&quot; parameter to avoid being banned.</p>
+<span class="hljs-keyword">done</span></code></pre>
+<p><strong>gallery-dl</strong> can download media like images and videos from many websites, so we can schedule downloading all from one script on schedule. So far i don&#39;t see simple way to abort parsing of current feed if we got to the old tweets. So it makes unnecessary requests and takes long time. Twitter API is rate limited to 180 calls every 15 minutes. So i add &quot;--sleep 6&quot; parameter to avoid being banned.</p>
 <p>Its popular misconception that something ever uploaded to internet stays there forever. On social media you account can be banned any minute for no reason and content are gone the same minute for all subscribers. Better to clone what you might need in the future, than rely on bookmarks.</p>
 
         </article>
@@ -611,6 +611,9 @@ footer a {
       <h2>
         <a href="/about/">About</a>
       </h2>
+      <p>
+        Contact e-mail: <a href="mailto:ne10-webdev@protonmail.com">ne10-webdev@protonmail.com</a>
+      </p>
       <p>
         On this blog, you'll mostly find <a href="/">posts</a> about web development, software and hardware
       </p>

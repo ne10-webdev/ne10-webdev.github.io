@@ -383,7 +383,7 @@ header.menu li {
   clear: both;
 }
 
-.list a {
+.list .list-header {
   font-weight: 600;
   font-size: 1.2em;
 }
@@ -429,7 +429,6 @@ article {
   list-style-type: disc;
   margin-left: 1em;
 }
-
 
 /* Footer & Teaser */
 
@@ -587,27 +586,30 @@ footer a {
 <p>Because i want full control of it and i don&#39;t like to manage complex solutions for such simple task. Also its a good practice to try something new.</p>
 <p>Lets make simple solution to convert batch of markdown files to static html, put them on webserver and call them a blog.</p>
 <p>I like to store data in DB, but tools to comfortably edit that data almost always more complicated than open/create and edit markdown file. How i quickly can add content to static blog anytime:</p>
-<pre><code>cat ~<span class="hljs-string">/.bash_aliases</span> 
-<span class="hljs-keyword">alias</span> blog='nano ~<span class="hljs-string">/web/blog/notes.md</span>'</code></pre><p>In i3wm just have to press Alt+Enter to open terminal and simply type &quot;<em>blog</em>&quot;. And right away start taking notes for future posts.</p>
+<pre><code class="language-bash"><span class="hljs-comment">#cat ~/.bash_aliases </span>
+<span class="hljs-built_in">alias</span> blog=<span class="hljs-string">'nano ~/web/blog/notes.md'</span></code></pre>
+<p>In i3wm just have to press Alt+Enter to open terminal and simply type &quot;<em>blog</em>&quot;. And right away start taking notes for future posts.</p>
 <p>Full project source code available on: <a href="https://github.com/ne10-webdev/blog-engine">https://github.com/ne10-webdev/blog-engine</a></p>
 <p>Lets create a markdown file like this:</p>
-<pre><code><span class="hljs-meta">---</span>
+<pre><code class="language-yaml"><span class="hljs-meta">---</span>
 <span class="hljs-attr">title:</span> <span class="hljs-string">About</span> <span class="hljs-string">me</span>
 <span class="hljs-attr">description:</span> <span class="hljs-string">page</span> <span class="hljs-string">description</span> <span class="hljs-string">text</span>
 <span class="hljs-attr">draft:</span> <span class="hljs-literal">true</span>
 <span class="hljs-attr">date:</span> <span class="hljs-number">1579036223040</span>
 <span class="hljs-meta">---</span>
 <span class="hljs-comment"># About me</span>
-<span class="hljs-string">Some</span> <span class="hljs-string">content</span> <span class="hljs-string">here...</span></code></pre><p>To convert markdown content and metadata  lets use thirdparty libraries <em>marked</em> and <em>front-mater</em>. So we can get html content and any metadata like this:</p>
-<pre><code><span class="hljs-keyword">const</span> marked = <span class="hljs-built_in">require</span>(<span class="hljs-string">'marked'</span>);
+<span class="hljs-string">Some</span> <span class="hljs-string">content</span> <span class="hljs-string">here...</span></code></pre>
+<p>To convert markdown content and metadata  lets use thirdparty libraries <em>marked</em> and <em>front-mater</em>. So we can get html content and any metadata like this:</p>
+<pre><code class="language-javascript"><span class="hljs-keyword">const</span> marked = <span class="hljs-built_in">require</span>(<span class="hljs-string">'marked'</span>);
 <span class="hljs-keyword">const</span> frontMatter = <span class="hljs-built_in">require</span>(<span class="hljs-string">'front-matter'</span>);
 
 <span class="hljs-keyword">const</span> fileContent = fs.readFileSync(file, <span class="hljs-string">'utf-8'</span>);
 <span class="hljs-keyword">const</span> item = frontMatter(fileContent);
 <span class="hljs-keyword">const</span> content = marked(item.body);
 <span class="hljs-keyword">const</span> isDraft = item.attributes.draft;
-<span class="hljs-keyword">const</span> createdData = item.attributes.date;</code></pre><p>But our html page must have also a common menu, header, footer, etc. So we can add them via some templating engine. There is many available, lets use EJS:</p>
-<pre><code><span class="hljs-keyword">const</span> ejs = <span class="hljs-built_in">require</span>(<span class="hljs-string">'ejs'</span>);
+<span class="hljs-keyword">const</span> createdData = item.attributes.date;</code></pre>
+<p>But our html page must have also a common menu, header, footer, etc. So we can add them via some templating engine. There is many available, lets use EJS:</p>
+<pre><code class="language-javascript"><span class="hljs-keyword">const</span> ejs = <span class="hljs-built_in">require</span>(<span class="hljs-string">'ejs'</span>);
 <span class="hljs-keyword">const</span> layoutTemplate = fse.readFileSync(<span class="hljs-string">'layout.ejs'</span>, <span class="hljs-string">'utf-8'</span>);
 <span class="hljs-keyword">const</span> pageHTML = ejs.render(
   layoutTemplate,
@@ -616,19 +618,20 @@ footer a {
     <span class="hljs-attr">filename</span>: path.join(options.site.themePath, <span class="hljs-string">`layout-<span class="hljs-subst">${page.layout}</span>`</span>)
   })
 );
-fs.writeFileSync(path.join(destPath, <span class="hljs-string">'index.html'</span>), pageHTML);</code></pre><p>As a result we made complete html page. And a site just a list of single pages with common parts, so we simply can render them one by one. To find all content pages and build html files for them we can recursively read content folder and call our method to build a page:</p>
-<pre><code><span class="hljs-keyword">const</span> walk = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(dir, done)</span> </span>{
+fs.writeFileSync(path.join(destPath, <span class="hljs-string">'index.html'</span>), pageHTML);</code></pre>
+<p>As a result we made complete html page. And a site just a list of single pages with common parts, so we simply can render them one by one. To find all content pages and build html files for them we can recursively read content folder and call our method to build a page:</p>
+<pre><code class="language-javascript"><span class="hljs-keyword">const</span> walk = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">dir, done</span>) </span>{
   <span class="hljs-keyword">let</span> results = [];
-  fs.readdir(dir, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(err, list)</span> </span>{
+  fs.readdir(dir, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">err, list</span>) </span>{
     <span class="hljs-keyword">if</span> (err) <span class="hljs-keyword">return</span> done(err);
     <span class="hljs-keyword">let</span> i = <span class="hljs-number">0</span>;
-    (<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">next</span><span class="hljs-params">()</span> </span>{
-      <span class="hljs-keyword">let</span> file = <span class="hljs-keyword">list</span>[i++];
-      <span class="hljs-keyword">if</span> (!file) <span class="hljs-keyword">return</span> done(<span class="hljs-keyword">null</span>, results);
+    (<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">next</span>(<span class="hljs-params"></span>) </span>{
+      <span class="hljs-keyword">let</span> file = list[i++];
+      <span class="hljs-keyword">if</span> (!file) <span class="hljs-keyword">return</span> done(<span class="hljs-literal">null</span>, results);
       file = path.resolve(dir, file);
-      fs.stat(file, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(err, stat)</span> </span>{
+      fs.stat(file, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">err, stat</span>) </span>{
         <span class="hljs-keyword">if</span> (stat &amp;&amp; stat.isDirectory()) {
-          walk(file, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(err, res)</span> </span>{
+          walk(file, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">err, res</span>) </span>{
             results = results.concat(res);
             next();
           });
@@ -639,33 +642,36 @@ fs.writeFileSync(path.join(destPath, <span class="hljs-string">'index.html'</spa
       });
     })();
   });
-};</code></pre><p>Of course site has not just html files, but also css, js, images and videos, other static files. Lets copy them all from content source folder to destination public folder:</p>
-<pre><code>const fse = require('fs-extra');
-const assetsPath = path.join(options.site.themePath, 'assets');
-<span class="hljs-keyword">if</span> (fse.exists<span class="hljs-constructor">Sync(<span class="hljs-params">assetsPath</span>)</span>) {
-  fse.copy<span class="hljs-constructor">Sync(<span class="hljs-params">assetsPath</span>, <span class="hljs-params">options</span>.<span class="hljs-params">site</span>.<span class="hljs-params">publicPath</span>)</span>;
-}</code></pre><p>But how we can make a list of blog posts? Well we have an array of all pages. So we can build a blog posts list page with such template:</p>
-<pre><code><span class="xml"><span class="hljs-meta">&lt;!DOCTYPE <span class="hljs-meta-keyword">html</span>&gt;</span>
-<span class="hljs-tag">&lt;<span class="hljs-name">html</span> <span class="hljs-attr">lang</span>=<span class="hljs-string">"en"</span>&gt;</span>
-<span class="hljs-tag">&lt;<span class="hljs-name">%-</span></span></span><span class="ruby"> <span class="hljs-keyword">include</span>(<span class="hljs-string">'partials/head'</span>) </span><span class="xml"><span class="hljs-tag">%&gt;</span>
-<span class="hljs-tag">&lt;<span class="hljs-name">body</span>&gt;</span>
-  <span class="hljs-tag">&lt;<span class="hljs-name">%-</span></span></span><span class="ruby"> <span class="hljs-keyword">include</span>(<span class="hljs-string">'partials/header'</span>) </span><span class="xml"><span class="hljs-tag">%&gt;</span>
-  <span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"page-inner"</span>&gt;</span>
-    <span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"container"</span>&gt;</span>    
-      <span class="hljs-tag">&lt;<span class="hljs-name">main</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"list"</span>&gt;</span>
-        <span class="hljs-tag">&lt;<span class="hljs-name">%</span></span></span><span class="ruby"> list.forEach(function(item){ </span><span class="xml"><span class="hljs-tag">%&gt;</span>
-          <span class="hljs-tag">&lt;<span class="hljs-name">article</span>&gt;</span>
-            <span class="hljs-tag">&lt;<span class="hljs-name">a</span> <span class="hljs-attr">href</span>=<span class="hljs-string">"&lt;%-</span></span></span><span class="ruby"> item.url </span><span class="xml"><span class="hljs-tag"><span class="hljs-string">%&gt;"</span>&gt;</span><span class="hljs-tag">&lt;<span class="hljs-name">%-</span></span></span><span class="ruby"> item.title </span><span class="xml"><span class="hljs-tag">%&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">a</span>&gt;</span>
-            <span class="hljs-tag">&lt;<span class="hljs-name">p</span>&gt;</span><span class="hljs-tag">&lt;<span class="hljs-name">%-</span></span></span><span class="ruby"> item.description </span><span class="xml"><span class="hljs-tag">%&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">p</span>&gt;</span>
-          <span class="hljs-tag">&lt;/<span class="hljs-name">article</span>&gt;</span>
-        <span class="hljs-tag">&lt;<span class="hljs-name">%</span></span></span><span class="ruby"> }); </span><span class="xml"><span class="hljs-tag">%&gt;</span>
-      <span class="hljs-tag">&lt;/<span class="hljs-name">main</span>&gt;</span>
-    <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
-    <span class="hljs-tag">&lt;<span class="hljs-name">%-</span></span></span><span class="ruby"> <span class="hljs-keyword">include</span>(<span class="hljs-string">'partials/footer'</span>) </span><span class="xml"><span class="hljs-tag">%&gt;</span>
-  <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
-<span class="hljs-tag">&lt;/<span class="hljs-name">body</span>&gt;</span>
-<span class="hljs-tag">&lt;/<span class="hljs-name">html</span>&gt;</span></span></code></pre><p>To have blog posts, projects and few single pages i split site in &quot;sections&quot; to have few lists pages if needed for each section:</p>
-<pre><code>{
+};</code></pre>
+<p>Of course site has not just html files, but also css, js, images and videos, other static files. Lets copy them all from content source folder to destination public folder:</p>
+<pre><code class="language-javascript"><span class="hljs-keyword">const</span> fse = <span class="hljs-built_in">require</span>(<span class="hljs-string">'fs-extra'</span>);
+<span class="hljs-keyword">const</span> assetsPath = path.join(options.site.themePath, <span class="hljs-string">'assets'</span>);
+<span class="hljs-keyword">if</span> (fse.existsSync(assetsPath)) {
+  fse.copySync(assetsPath, options.site.publicPath);
+}</code></pre>
+<p>But how we can make a list of blog posts? Well we have an array of all pages. So we can build a blog posts list page with such template:</p>
+<pre><code class="language-htmlbars">&lt;!DOCTYPE html&gt;
+&lt;html lang="en"&gt;
+&lt;%- include('partials/head') %&gt;
+&lt;body&gt;
+  &lt;%- include('partials/header') %&gt;
+  &lt;div class="page-inner"&gt;
+    &lt;div class="container"&gt;    
+      &lt;main class="list"&gt;
+        &lt;% list.forEach(function(item){ %&gt;
+          &lt;article&gt;
+            &lt;a href="&lt;%- item.url %&gt;"&gt;&lt;%- item.title %&gt;&lt;/a&gt;
+            &lt;p&gt;&lt;%- item.description %&gt;&lt;/p&gt;
+          &lt;/article&gt;
+        &lt;% }); %&gt;
+      &lt;/main&gt;
+    &lt;/div&gt;
+    &lt;%- include('partials/footer') %&gt;
+  &lt;/div&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+<p>To have blog posts, projects and few single pages i split site in &quot;sections&quot; to have few lists pages if needed for each section:</p>
+<pre><code class="language-json">{
   <span class="hljs-attr">"pages"</span>: {
     <span class="hljs-attr">"name"</span>: <span class="hljs-string">"pages"</span>,
     <span class="hljs-attr">"urlPrefix"</span>: <span class="hljs-string">""</span>,
@@ -686,14 +692,16 @@ const assetsPath = path.join(options.site.themePath, 'assets');
     <span class="hljs-attr">"themePath"</span>: <span class="hljs-string">"/home/user/web/blog/themes/ne10"</span>,
     <span class="hljs-attr">"publicPath"</span>: <span class="hljs-string">"/home/user/web/blog/public"</span>
   }
-}</code></pre><p>I used highlight.js library to highlight code samples included in markdown files right on the backend of blog engine. So no client-side javascript needed, but it significantly slowed down site build time.</p>
-<pre><code><span class="hljs-keyword">const</span> hljs = <span class="hljs-built_in">require</span>(<span class="hljs-string">"highlight.js"</span>);
+}</code></pre>
+<p>I used highlight.js library to highlight code samples included in markdown files right on the backend of blog engine. So no client-side javascript needed, but it significantly slowed down site build time.</p>
+<pre><code class="language-javascript"><span class="hljs-keyword">const</span> hljs = <span class="hljs-built_in">require</span>(<span class="hljs-string">"highlight.js"</span>);
 marked.setOptions({
   <span class="hljs-attr">highlight</span>: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">md</span>) </span>{
     <span class="hljs-keyword">return</span> hljs.highlightAuto(md).value;
   }
-});</code></pre><p>Each time after we change content or site template we have to rebuild static version. And refresh a browser to see changes. Its boring and have to be authomated. We can use live-server to reload browser, and chokidar library to listen for file changes:</p>
-<pre><code><span class="hljs-keyword">const</span> chokidar = <span class="hljs-built_in">require</span>(<span class="hljs-string">'chokidar'</span>);
+});</code></pre>
+<p>Each time after we change content or site template we have to rebuild static version. And refresh a browser to see changes. Its boring and have to be authomated. We can use live-server to reload browser, and chokidar library to listen for file changes:</p>
+<pre><code class="language-javascript"><span class="hljs-keyword">const</span> chokidar = <span class="hljs-built_in">require</span>(<span class="hljs-string">'chokidar'</span>);
 <span class="hljs-keyword">const</span> debounce = <span class="hljs-built_in">require</span>(<span class="hljs-string">'lodash.debounce'</span>);
 <span class="hljs-keyword">const</span> liveServer = <span class="hljs-built_in">require</span>(<span class="hljs-string">"live-server"</span>);
 
@@ -729,7 +737,9 @@ marked.setOptions({
   );
 }
 
-init();</code></pre><p>Now we can run <em>node serve.js</em> or <em>npm run serve</em> and browser with locally built website opens automatically.</p>
+init();</code></pre>
+<p>Now we can run <em>node serve.js</em> or <em>npm run serve</em> and browser with locally built website opens automatically.</p>
+<p><a href="/blog/2020/building-blog-part2/">See part 2</a></p>
 
         </article>
       </main>
@@ -740,6 +750,9 @@ init();</code></pre><p>Now we can run <em>node serve.js</em> or <em>npm run serv
       <h2>
         <a href="/about/">About</a>
       </h2>
+      <p>
+        Contact e-mail: <a href="mailto:ne10-webdev@protonmail.com">ne10-webdev@protonmail.com</a>
+      </p>
       <p>
         On this blog, you'll mostly find <a href="/">posts</a> about web development, software and hardware
       </p>

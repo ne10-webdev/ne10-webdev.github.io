@@ -581,21 +581,62 @@ footer a {
     <div class="container">
       <main class="content">
         <article>
-          <h1>State of electronics &amp; software</h1>
-          <p> Not sure why the future should be this way. Things manufacturers come up with:</p>
-<ul>
-<li>build in adware</li>
-<li>build in spyware</li>
-<li>prevent resale</li>
-<li>prevent repair</li>
-<li>trigger obsolescence</li>
-<li>prevent ownership (you rent, but pay full price on &quot;purchase&quot;)</li>
-<li>inevitably change protocols/API</li>
-<li>data lock-in</li>
-</ul>
-<p>I can&#39;t help but feel like this is a massive opportunity and business eventually will make a loop back to doing things without tricks to up revenue. It can&#39;t continue like this for long, right? Unless users really don&#39;t care about they own long-term interests.</p>
-<p>Software used to be buy once use forever. You own purchased version of product and maybe some updates. But generally you had to pay for next version of this software product. Now its hard to find this. Subscription are everywhere.</p>
-<p>Most of the time software distributed with very limited warranty, mostly &quot;AS IS&quot;. But what about repair? Shoould end user ask for right of repair? But how it can be done without making everything open source and providing debug tools and documentation. So far software used to lock-in customers using other tools like argicalture tracktors from right of repair. And thats scary. You but expensive piece of equipment, something gets broken from wear and tear, than you change the part to new or used one, but tracktor don&#39;t work because software don&#39;t allow. You are not a tracktor owner anymore. But you paid what you was asked for in full. Nice.</p>
+          <h1>Building static blog engine on Node.js from scratch (part 2)</h1>
+          <p><a href="/blog/2020/building-blog/">See part 1</a></p>
+<p>Full project source code available on: <a href="https://github.com/ne10-webdev/blog-engine">https://github.com/ne10-webdev/blog-engine</a></p>
+<p>We have only basic functionality so far. There are only post pages, page with list of posts and almost nothing more.</p>
+<p>Lets add some features. Tagging posts will be must have.</p>
+<p>Current YAML metadata allow adding array of tags easily:</p>
+<pre><code class="language-yaml"><span class="hljs-meta">---</span>
+<span class="hljs-attr">title:</span> <span class="hljs-string">Building</span> <span class="hljs-string">static</span> <span class="hljs-string">blog</span> <span class="hljs-string">engine</span> <span class="hljs-string">on</span> <span class="hljs-string">Node.js</span> <span class="hljs-string">from</span> <span class="hljs-string">scratch</span> <span class="hljs-string">(part</span> <span class="hljs-number">2</span><span class="hljs-string">)</span>
+<span class="hljs-attr">description:</span> <span class="hljs-string">why</span> <span class="hljs-string">build</span> <span class="hljs-string">another</span> <span class="hljs-string">boring</span> <span class="hljs-string">blog</span> <span class="hljs-string">engine?</span>
+<span class="hljs-attr">date:</span> <span class="hljs-number">1583750857597</span>
+<span class="hljs-attr">tags:</span> <span class="hljs-string">['nodejs',</span> <span class="hljs-string">'backend'</span><span class="hljs-string">]</span>
+<span class="hljs-meta">---</span></code></pre>
+<p>Now we need to create pages for each tag on each website section. Some code had to be modified for this:</p>
+<pre><code class="language-javascript"><span class="hljs-keyword">let</span> tags = [];
+<span class="hljs-keyword">for</span>(<span class="hljs-keyword">let</span> page <span class="hljs-keyword">of</span> list) {
+  buildPage(page, options);
+  <span class="hljs-keyword">for</span>(<span class="hljs-keyword">let</span> tag <span class="hljs-keyword">of</span> page.tags) {
+    <span class="hljs-keyword">if</span>(!tags.includes(tag)) {
+      tags.push(tag);
+    }
+  }
+}
+<span class="hljs-comment">// build tags pages</span>
+<span class="hljs-keyword">for</span>(<span class="hljs-keyword">let</span> tag <span class="hljs-keyword">of</span> tags) {
+  buildTagPage(list, tag, options);
+}</code></pre>
+<p>We can reuse same buildPage function, just passing new content to it:</p>
+<pre><code class="language-javascript"><span class="hljs-keyword">const</span> buildTagPage = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">list, tag, options</span>) </span>{
+  <span class="hljs-keyword">let</span> listByTag = [];
+  <span class="hljs-keyword">for</span>(<span class="hljs-keyword">let</span> item <span class="hljs-keyword">of</span> list) {
+    <span class="hljs-keyword">if</span>(item.tags.includes(tag)) {
+      listByTag.push(item);
+    }
+  }
+  <span class="hljs-keyword">const</span> listPage = {
+    <span class="hljs-attr">section</span>: options.section.name,
+    <span class="hljs-attr">url</span>: options.site.basePrefix + options.section.urlPrefix +
+      <span class="hljs-string">'/tag/'</span> + tag,
+    <span class="hljs-attr">title</span>: <span class="hljs-string">'Blog posts'</span>,
+    <span class="hljs-attr">description</span>: <span class="hljs-string">''</span>,
+    <span class="hljs-attr">date</span>: <span class="hljs-keyword">new</span> <span class="hljs-built_in">Date</span>().getTime(),
+    <span class="hljs-attr">draft</span>: <span class="hljs-literal">null</span>,
+    <span class="hljs-attr">layout</span>: <span class="hljs-string">'list'</span>,
+    <span class="hljs-attr">content</span>: <span class="hljs-string">''</span>,
+    <span class="hljs-attr">list</span>: listByTag
+  };
+  buildPage(listPage, options);
+}</code></pre>
+<p>And a new part in template:</p>
+<pre><code class="language-plaintext">&lt;% if(item.tags.length) { %&gt;
+  &lt;p&gt;Tags:
+    &lt;% item.tags.forEach(function(tag){ %&gt;
+      &lt;span&gt;&lt;a href="/&lt;%- item.section %&gt;/tag/&lt;%- tag %&gt;"&gt;&lt;%- tag %&gt;&lt;/a&gt;&lt;/span&gt;
+    &lt;% }); %&gt;
+  &lt;/p&gt;
+&lt;% } %&gt;</code></pre>
 
         </article>
       </main>
